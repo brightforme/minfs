@@ -6,6 +6,7 @@ var FileStream = module.exports = function(f, options) {
   Readable.call(this, options);
   this.file = f;
   this.length = f.size;
+  this.fr = new FileReader();
   this.offset = 0;
   this.SIZE = Math.pow(2, 64);
   this.ended = false;
@@ -25,10 +26,10 @@ FileStream.prototype._read = function(size) {
     x = f.slice(this.offset, new_offs);
   }
   this.offset = new_offs;
-  var fr = new FileReader(x);
   var self = this;
   fr.onload = function() {
     self.push(this.result);
+    this.onload = null;
   };
   fr.readAsText(x);
 };
